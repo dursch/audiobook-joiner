@@ -3,10 +3,7 @@ import re
 import shutil
 import subprocess
 from mutagen.easyid3 import EasyID3
-from mutagen.id3 import ID3, APIC
-
-# Define the root directory (edit this)
-root_dir = "C:/Users/Administrator/Downloads/Audiobooks/join"
+from mutagen.id3 import ID3, APIC, PictureType
 
 def natural_sort_key(s):
     """Natural sort helper function for sorting filenames containing numbers."""
@@ -15,6 +12,16 @@ def natural_sort_key(s):
 def escape_file_path(file_path):
     """Escapes file path to be safely used in shell commands."""
     return file_path.replace("'", "'\\''")
+
+def find_cover_art(dirpath):
+    """Finds a JPEG image in the directory to be used as cover art."""
+    for file in os.listdir(dirpath):
+        if file.lower().endswith(('.jpg', '.jpeg')):
+            return file
+    return None
+
+# Define the root directory
+root_dir = "C:/Users/Administrator/Downloads/Audiobooks/join"
 
 # First, calculate the total number of mp3 files
 total_files = 0
@@ -66,7 +73,19 @@ for dirpath, dirnames, filenames in os.walk(root_dir):
         first_file_cover = ID3(mp3_files[0]).getall("APIC")[0]  # Assuming there's at least one image
     except Exception as e:
         print(f"Error extracting cover art: {e}")
-
+        print("Searching for cover images...")
+        # If no cover art is found in the MP3, look for a JPEG image in the directory
+        jpeg_cover = find_cover_art(dirpath)
+        if jpeg_cover:
+            with open(jpeg_cover, 'rb') as img:
+                first_file_cover = APIC(
+                    encoding=3,                # 3 is for utf-8
+                    mime='image/jpeg',         # image/jpeg or image/png
+                    type=PictureType.COVER_FRONT,  # 3 is for the cover image
+                    desc='Cover',
+                    data=img.read()
+                )
+    # Apply ID3 tags and possibly the cover art to the concatenated file
     # Apply ID3 tags to the concatenated file
     audio = EasyID3(mp3_file_name)
     for key, value in first_file_tags.items():
