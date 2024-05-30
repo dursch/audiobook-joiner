@@ -1,11 +1,11 @@
 # Audiobook MP3 Concatenation Script
 
-This Python script concatenates multiple MP3 files within each subdirectory of a given directory, preserving the ID3 tags, including cover art, from the first file in each subdirectory. It is designed to handle special characters in file names and ensures the correct order of files based on natural sorting.
+This Python script concatenates multiple MP3 files within each subdirectory of a given directory, preserving the ID3 tags (including cover art) from the first file in each subdirectory. It is designed to handle special characters in file names and ensures the correct order of files based on natural sorting.
 
 ## Features
 
 - Concatenates MP3 files in each subdirectory.
-- Preserves ID3 tags, including cover art.
+- Preserves ID3 tags (including cover art).
 - Handles special characters in file paths.
 - Ensures natural sorting order of files (e.g., 1, 2, ... 10, 11, ...).
 
